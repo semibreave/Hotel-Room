@@ -203,7 +203,7 @@ $rooms = Import-Excel C:\Users\herngyih\Documents\Fiverr\Hotel\fiverr.xlsx -Work
    
     for($k=0; $k -lt $allGuests2d.Count; $k++){
 
-        $continue = $false
+        $continue = $true
 
         do{
             $perfectRoomObj = getPerfectRoom (getVacantRooms $rooms) (getRoomlessMembers $k $allGuests2d)            
@@ -212,8 +212,6 @@ $rooms = Import-Excel C:\Users\herngyih\Documents\Fiverr\Hotel\fiverr.xlsx -Work
              if($perfectRoomObj -ne $null){
 
                 for($l=0 ; $l -lt $perfectRoomObj.capacity; $l++){
-
-                  #Write-Host $k $l $allGuests2d
                   
                     setHasRoom $k $allGuests2d $perfectRoomObj.Number
                   
@@ -222,16 +220,26 @@ $rooms = Import-Excel C:\Users\herngyih\Documents\Fiverr\Hotel\fiverr.xlsx -Work
                 $perfectRoomObj.Vacant = $false
             }       
             
-            #else{
-            #    
-            #    if($true){
-            #    }
-            #
-            #    else{
-            #    
-            #        $continue -eq $false
-            #    }
-            #} 
+            else{
+                
+                $smallRoomObj = getSmallRoom (getVacantRooms $rooms) (getRoomlessMembers $k $allGuests2d)
+
+                if($smallRoomObj -ne $null){
+
+                    for($l=0 ; $l -lt $smallRoomObj.capacity; $l++){
+                        
+                       setHasRoom $k $allGuests2d $smallRoomObj.Number
+                    }
+
+                    $smallRoomObj.Vacant = $false
+
+                 }
+            
+                else{
+                
+                    $continue = $false
+                }
+            } 
         }
 
         while($continue)
@@ -239,3 +247,9 @@ $rooms = Import-Excel C:\Users\herngyih\Documents\Fiverr\Hotel\fiverr.xlsx -Work
  
 
 #End of test area 3
+
+
+#Start of test area 4
+
+    $allGuests2d|Export-Excel fiverrHotelResult.xlsx
+#End of test area 4
